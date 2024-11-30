@@ -2,6 +2,7 @@
 import express, {  Request, Response } from 'express';
 import dotenv from 'dotenv';
 import connectDB from './db';
+import { StudentRoutes } from './app/modules/students/students.route';
 
 const app = express();
 dotenv.config();
@@ -11,7 +12,7 @@ app.use(express.json());
 // app.use(cors());
 
 // application routes
-// app.use('/api/v1', router);
+ app.use('/api/v1/students', StudentRoutes);
 
 app.get('/', (req:Request, res:Response) => {
     res.send('Hello World 2!')
