@@ -2,7 +2,9 @@ import { TStudent } from "./students.interface";
 import {StudentModel } from "./students.model";
 
 const createStudentToDb = async(student:TStudent)=>{
-const result = await StudentModel.create(student)
+// const result = await StudentModel.create(student) //builtin static method
+const studentData = new StudentModel(student) //builtin instance method
+const result = await studentData.save();
 return result;
 }
 
