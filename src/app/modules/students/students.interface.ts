@@ -1,3 +1,4 @@
+import { Model } from "mongoose";
 
 
 export type TUserName = {
@@ -40,3 +41,9 @@ export type TStudent = {
   profileImg?: string;
   isDeleted: boolean;
 };
+
+export type StudentMethods = {
+  isUserExists(id:string) : Promise<TStudent | null>
+}
+
+export type StudentModel = Model<TStudent, Record<string, never>,StudentMethods >
