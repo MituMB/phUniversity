@@ -1,13 +1,14 @@
 import { Schema, model } from 'mongoose';
 import {
 
-  StudentMethods,
+  // StudentMethods,
   StudentModel,
   TGuardian,
   TLocalGuardian,
   TStudent,
   TUserName,
 } from './students.interface';
+import { log } from 'console';
 
 const userNameSchema = new Schema<TUserName>({
   firstName: {
@@ -76,7 +77,7 @@ const localGuradianSchema = new Schema<TLocalGuardian>({
   },
 });
 
-const studentSchema = new Schema<TStudent, StudentModel, StudentMethods>(
+const studentSchema = new Schema<TStudent, StudentModel>(
   {
     id: {
       type: String,
@@ -142,9 +143,39 @@ const studentSchema = new Schema<TStudent, StudentModel, StudentMethods>(
   },
 );
 
-studentSchema.methods.isUserExists = async function (id: string) {
+//pre save middleware/hook
+
+studentSchema.pre('save', function () {
+  console.log(this,'pre hook: we will save data');
+  
+  // this.pipeline().unshift({ $match: { isDeleted: { $ne: true } } });
+  // next();
+});
+
+
+//post save middleware/hook
+
+studentSchema.post('save', function () {
+  console.log(this,'post hook: we saved data');
+  
+  // this.pipeline().unshift({ $match: { isDeleted: { $ne: true } } });
+  // next();
+});
+//creating a custom static method
+studentSchema.statics.isUserExists = async function (id: string) {
   const existingUser = await Student.findOne({ id });
   return existingUser;
 };
+
+//creating a custom instance method
+// studentSchema.methods.isUserExists = async function (id: string) {
+//   const existingUser = await Student.findOne({ id });
+//   return existingUser;
+// };
+
+//creating a custom static  method
+
+
+
 
 export const Student = model<TStudent,StudentModel>('Student', studentSchema);
