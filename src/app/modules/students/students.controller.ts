@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from "express";
+import { NextFunction, Request, RequestHandler, Response } from "express";
 import { StudentService } from "./students.service";
 import studentValidationSchema from "./students.validation";
 // import httpStatus from 'http-status';
@@ -27,9 +27,14 @@ import sendResponse from "../../utils/sendResponse";
 //   }
 // }
 
+const catchAsync = (fn:RequestHandler)=>{
+  return(req: Request, res: Response, next: NextFunction)=>{
 
-const getSingleStudent = async(req: Request, res: Response,  next: NextFunction)=>{
-  try {
+    Promise.resolve(fn(req, res,  next)).catch(err => next(err));
+  }
+}
+const getSingleStudent = catchAsync(async (req, res,  next)=>{
+
     const studentid = req.params.studentId;
     // will call service function to to send this db
     const result = await StudentService.getSingleStudentFromDb(studentid)
@@ -39,14 +44,12 @@ const getSingleStudent = async(req: Request, res: Response,  next: NextFunction)
     message:"Specific Student retrived Successfully",
     data:result
   })
-} catch (err) {
-  next(err);
-}
 }
 
-const getAllStudent = async(req: Request, res: Response,  next: NextFunction)=>{
+) 
+const getAllStudent = catchAsync(async (req, res,  next)=>{
 
-  try {
+
     // will call service function to to send this db
     const result = await StudentService.getAllStudentFromDb()
   //send response
@@ -55,15 +58,9 @@ const getAllStudent = async(req: Request, res: Response,  next: NextFunction)=>{
     message:"Student found",
     data:result
   })
-   } catch (err) {
-    next(err);
-  }
-}
-const deleteStudent = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
+  
+}) 
+const deleteStudent = catchAsync( async (req, res,  next)=> {
   try {
     const { studentId } = req.params;
     const result = await StudentService.deleteStudentFromDb(studentId);
@@ -77,7 +74,7 @@ const deleteStudent = async (
   } catch (err) {
     next(err);
   }
-};
+})
 export const StudentControllers = {
     // createStudent,
     getAllStudent,
