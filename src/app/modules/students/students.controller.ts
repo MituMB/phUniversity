@@ -3,6 +3,7 @@ import { StudentService } from "./students.service";
 import studentValidationSchema from "./students.validation";
 // import httpStatus from 'http-status';
 import sendResponse from "../../utils/sendResponse";
+import catchAsync from "../../utils/catchAsync";
 
 // const createStudent = async(req: Request, res: Response)=>{
 
@@ -27,13 +28,8 @@ import sendResponse from "../../utils/sendResponse";
 //   }
 // }
 
-const catchAsync = (fn:RequestHandler)=>{
-  return(req: Request, res: Response, next: NextFunction)=>{
 
-    Promise.resolve(fn(req, res,  next)).catch(err => next(err));
-  }
-}
-const getSingleStudent = catchAsync(async (req, res,  next)=>{
+const getSingleStudent = catchAsync(async (req, res)=>{
 
     const studentid = req.params.studentId;
     // will call service function to to send this db
@@ -47,7 +43,7 @@ const getSingleStudent = catchAsync(async (req, res,  next)=>{
 }
 
 ) 
-const getAllStudent = catchAsync(async (req, res,  next)=>{
+const getAllStudent = catchAsync(async (req, res)=>{
 
 
     // will call service function to to send this db
@@ -60,8 +56,8 @@ const getAllStudent = catchAsync(async (req, res,  next)=>{
   })
   
 }) 
-const deleteStudent = catchAsync( async (req, res,  next)=> {
-  try {
+const deleteStudent = catchAsync( async (req, res)=> {
+
     const { studentId } = req.params;
     const result = await StudentService.deleteStudentFromDb(studentId);
 
@@ -71,9 +67,7 @@ const deleteStudent = catchAsync( async (req, res,  next)=> {
       message: 'Student is deleted succesfully',
       data: result,
     });
-  } catch (err) {
-    next(err);
-  }
+  
 })
 export const StudentControllers = {
     // createStudent,
